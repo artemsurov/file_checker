@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "file-checker"
+version = "0.1.0"
+description = ""
+authors = ["Artemiy Surov <asurov@iponweb.net>"]
+readme = "README.md"
+packages = [{include = "file_checker"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+Django = "^4.2.5"
+celery = "^5.3.4"
+jinja2 = "^3.1.2"
+psycopg2 = "^2.9.7"
+djoser = "^2.2.0"
+model-bakery = "^1.15.0"
+pytest-django = "^4.5.2"
+django-extensions = "^3.2.3"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "conf.settings"
+python_files = ["test_*.py", "*_test.py", "testing/python/*.py"]
