@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  nginx:
+    build: ./nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  postgres:
+    image: postgres:14.4
+    restart: unless-stopped
+    volumes:
+      - pgdata:/var/lib/postgresql
+    env_file:
+      - settings.env
+
+  rabbitmq:
+    image: rabbitmq:3.10-management-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    env_file:
+      - settings.env
+
+  backend:
+    build:
+      context: .
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    ports:
+      - "9000:9000"
+    env_file:
+      - settings.env
+
+  celery-backend:
+    build:
+      context: .
+    entrypoint: celery -A conf worker --beat --loglevel info
+    depends_on:
+      - rabbitmq
+      - backend
+    env_file:
+      - settings.env
+
+
+volumes:
+  rabbitmq-data:
+  pgdata:
