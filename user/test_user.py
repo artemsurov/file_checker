@@ -1,5 +1,7 @@
 import pytest
 from rest_framework import status
+from django.core import mail
+from user.tasks import notify_user
 
 from user.models import User
 
@@ -36,3 +38,10 @@ def test_login(api_client, email, password):
 
     assert response.status_code == status.HTTP_200_OK, response.data
     assert 'auth_token' in response.data
+
+
+def test_notify_user(caplog):
+
+    notify_user('test@test.com', 'test.txt', 'test')
+
+    assert mail.outbox[0].subject == 'Your file has been validated'
