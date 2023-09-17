@@ -8,18 +8,12 @@ from file_processor.const import FileStatus
 from file_processor.models import FileProcessor
 
 
-@pytest.fixture()
-def upload_file(settings, tmp_path):
-    settings.MEDIA_ROOT = str(tmp_path)
-    return SimpleUploadedFile("file.py", b"import this", content_type="text/plain")
-
-
 def test_read_files(customer_client):
     file1 = baker.make('file_processor.fileprocessor', user=customer_client.user)
-    file1_checks = baker.make('file_processor.checks', file=file1, status=FileChecksStatus.Error)
+    baker.make('file_processor.checks', file=file1, status=FileChecksStatus.Error)
 
     file2 = baker.make('file_processor.fileprocessor', user=customer_client.user)
-    file2_checks = baker.make('file_processor.checks', file=file2, status=FileChecksStatus.Done)
+    baker.make('file_processor.checks', file=file2, status=FileChecksStatus.Done)
 
     response = customer_client.get('/files/')
 
@@ -60,7 +54,8 @@ def test_delete_file(customer_client):
     response = customer_client.delete(f'/files/{file.id}/')
 
     assert response.status_code == status.HTTP_204_NO_CONTENT, response.data
-    assert not FileProcessor.objects.filter(id=file.id).exists()
+    file.refresh_from_db()
+    assert file.status == FileStatus.Deleted
 
 
 def test_run_checks_success(customer_client, upload_file):
