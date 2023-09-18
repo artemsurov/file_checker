@@ -43,15 +43,14 @@
     var apiEndpoint = '/api/files/' + extractIdFromUrl() + '/';
     var authToken = localStorage.getItem("authToken");
     function extractIdFromUrl() {
-        var url = window.location.pathname; // Get the URL path
-        var parts = url.split('/'); // Split the URL by '/'
+        var url = window.location.pathname;
+        var parts = url.split('/');
         if (parts.length >= 2) {
-            return parts[2]; // 'id' should be the third part of the path (index 2)
+            return parts[2];
         }
         return null;
     }
 
-    // Function to fetch data from the API
     function fetchData() {
 
         jQuery.ajax({
@@ -62,7 +61,6 @@
                 "AUTHORIZATION": "Token " + authToken
             },
             success: function (data) {
-                // Handle the data retrieved from the API
                 var dataHtml = `
                     <h4>ID: ${data.id}</h4>
                     <p><a href="${data.file}" target="_blank">File name:  ${data.filename}</a></p>
@@ -72,14 +70,12 @@
                     <ul>
                 `;
 
-                // Iterate through checks and add them to the list
                 data.checks.forEach(function (check) {
                     dataHtml += `<li>${check.date} ${check.status} ${check.result}</li>`;
                 });
 
                 dataHtml += '</ul>';
 
-                // Display the data in the data-container
                 $('#data-container').html(dataHtml);
             },
             error: function (error) {
@@ -94,7 +90,7 @@
             url: apiEndpoint,
             type: 'DELETE',
             headers: {
-                "AUTHORIZATION": "Token " + authToken // Include the token in the header
+                "AUTHORIZATION": "Token " + authToken
             },
             success: function (data) {
                 alert('Item removed successfully!');
@@ -134,7 +130,7 @@
             url: apiEndpoint,
             type: 'POST',
             headers: {
-                "AUTHORIZATION": "Token " + authToken // Include the token in the header
+                "AUTHORIZATION": "Token " + authToken
             },
             success: function (data) {
                 alert('Run check successfully!');

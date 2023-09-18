@@ -37,7 +37,7 @@
 
 <script>
     $("#fileUploadForm").submit(function (event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+        event.preventDefault();
         var formData = new FormData(this);
 
         var authToken = localStorage.getItem("authToken");
@@ -46,13 +46,12 @@
             type: "POST",
             url: "/api/files/",
             data: formData,
-            processData: false, // Prevent jQuery from automatically processing the data
-            contentType: false, // Ensure that the correct content type is set
+            processData: false,
+            contentType: false,
             headers: {
-                "AUTHORIZATION": "Token " + authToken // Include the token in the header
+                "AUTHORIZATION": "Token " + authToken
             },
             success: function (response) {
-                // Handle a successful file upload (e.g., display a success message)
                 alert("File uploaded successfully!");
             },
             error: function (error) {
