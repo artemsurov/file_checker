@@ -57,5 +57,3 @@ def test_validate_files_all(delay, db):
     assert fp2.checks.count() == 1
     fp2_check = fp2.checks.first()
     assert fp2_check.status == FileChecksStatus.Error
-
-

@@ -47,4 +47,3 @@ class DetailPostRouter(DefaultRouter):
             initkwargs={}
         ),
     ]
-

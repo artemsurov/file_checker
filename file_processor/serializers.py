@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from rest_framework import fields
 from rest_framework.fields import CharField
-from rest_framework.fields import Field
-from rest_framework.fields import empty
 
 from file_processor import models
 from file_processor.const import FileStatus

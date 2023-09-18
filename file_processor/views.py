@@ -27,4 +27,3 @@ class FileProcessorViewSet(viewsets.ModelViewSet):
             raise PermissionDenied({"result": "failed", "message": "have no access to this file"})
         validate_files_task.delay(instance.file.name)
         return Response(status=status.HTTP_200_OK, data={"result": "ok", "message": "file under testing"})
-

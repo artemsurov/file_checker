@@ -1,11 +1,9 @@
-import datetime
-
 import pytest
-from django.utils.crypto import get_random_string
+import rest_framework
+
 from model_bakery import baker
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
-from rest_framework_simplejwt import tokens
 
 
 @pytest.fixture()

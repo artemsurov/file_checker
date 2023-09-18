@@ -20,7 +20,7 @@ file_checker = logging.getLogger('file_checker')
 def flake_validator(path_to_file: str):
     file = Path(path_to_file)
     if not file.exists():
-        file_checker.info(f'File %s not found', file.name)
+        file_checker.info('File %s not found', file.name)
         return
     with redirect_stdout(io.TextIOWrapper(io.BytesIO())) as f:
         cli.main([str(file)])
@@ -47,4 +47,4 @@ def validate_files(file_name: str = ''):
 
         Checks.objects.create(file=fp, status=status, result=results)
         notify_user.delay(fp.user.email, fp.file.name, results)
-        file_checker.info(f'File %s has been validated with results: %s', fp.file.name, results)
+        file_checker.info('File %s has been validated with results: %s', fp.file.name, results)
