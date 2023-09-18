@@ -1,6 +1,7 @@
 import io
 import logging
 from contextlib import redirect_stdout
+import datetime
 from pathlib import Path
 
 from django.db.models import Q
@@ -19,16 +20,31 @@ file_checker = logging.getLogger('file_checker')
 def flake_validator(path_to_file: str):
     file = Path(path_to_file)
     if not file.exists():
-        raise FileNotFoundError()
+        file_checker.info(f'File %s not found', file.name)
+        return
     with redirect_stdout(io.TextIOWrapper(io.BytesIO())) as f:
         cli.main([str(file)])
     f.seek(0)
     return f.readlines()
 
 
-def validate_files():
-    for fp in FileProcessor.objects.filter(status=Q(FileStatus.New) | Q(FileStatus.Updated)):
-        results = flake_validator(str(fp.file))
-        Checks.objects.create(fp, status=FileChecksStatus.Done, result=results)
+def validate_files(file_name: str = ''):
+    if file_name:
+        query = Q(file=file_name)
+    else:
+        query = Q(status=FileStatus.New) | Q(status=FileStatus.Updated)
+    for fp in FileProcessor.objects.filter(query):
+        results = flake_validator(fp.file.path)
+        if results:
+            status = FileChecksStatus.Error
+            fp.status = FileStatus.Error
+        else:
+            status = FileChecksStatus.Done
+            fp.status = FileStatus.Done
+
+        fp.last_check = datetime.date.today()
+        fp.save()
+
+        Checks.objects.create(file=fp, status=status, result=results)
         notify_user.delay(fp.user.email, fp.file.name, results)
-        file_checker.info(f'File {fp.file.name} has been validated with results: {results}')
+        file_checker.info(f'File %s has been validated with results: %s', fp.file.name, results)

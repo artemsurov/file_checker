@@ -13,6 +13,7 @@ def notify_user(user_email, file_name, results):
         'Your file has been validated',
         f'Your file {file_name} has been validated with results: {results}',
         from_email=None,
-        recipient_list=[user_email]
+        recipient_list=[user_email],
+        fail_silently=True,
         )
-    file_checker.info(f'Email has been sent to {user_email} with results: {results}')
+    file_checker.info('Email has been sent to %s with results: %s', user_email, results)

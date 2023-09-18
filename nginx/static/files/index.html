@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data List Page</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header">
+                    Data List
+                </div>
+                <div class="card-body">
+                    <a href="/upload/" class="btn btn-primary mb-3">Upload New File</a>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>File Name</th>
+                                <th>Last Check</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-list">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+
+    function fetchDataList() {
+        var authToken = localStorage.getItem("authToken");
+
+        jQuery.ajax({
+            url: '/api/files/',
+            type: 'GET',
+            dataType: 'json',
+            headers: {
+                "AUTHORIZATION": "Token " + authToken
+            },
+            success: function (dataList) {
+                var tableRows = '';
+                dataList.forEach(function (data) {
+                    tableRows += `
+                        <tr>
+                            <td><a href="/files/${data.id}" target="_blank">${data.id}</a> </td>
+                            <td><a href="${data.file}" target="_blank">${data.filename}</a></td>
+                            <td>${data.last_check}</td>
+                            <td>${data.status}</td>
+                        </tr>
+                    `;
+                });
+
+                $('#data-list').html(tableRows);
+            },
+            error: function (error) {
+                alert('Error fetching data from the API.');
+            }
+        });
+    }
+
+    $(document).ready(fetchDataList);
+</script>
+
+</body>
+</html>

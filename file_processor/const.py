@@ -5,6 +5,8 @@ class FileStatus(TextChoices):
     New = 'new'
     Updated = 'updated'
     Deleted = 'deleted'
+    Done = 'done'
+    Error = 'error'
 
 
 class FileChecksStatus(TextChoices):

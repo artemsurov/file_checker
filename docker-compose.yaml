@@ -16,6 +16,8 @@ services:
       - pgdata:/var/lib/postgresql
     env_file:
       - settings.env
+    ports:
+      - "5432:5432"
 
   rabbitmq:
     image: rabbitmq:3.10-management-alpine
@@ -38,6 +40,8 @@ services:
       - postgres
     ports:
       - "9000:9000"
+    volumes:
+      - files:/media
     env_file:
       - settings.env
 
@@ -48,6 +52,8 @@ services:
     depends_on:
       - rabbitmq
       - backend
+    volumes:
+      - files:/media
     env_file:
       - settings.env
 
@@ -55,3 +61,4 @@ services:
 volumes:
   rabbitmq-data:
   pgdata:
+  files:

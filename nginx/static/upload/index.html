@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload Page</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    File Upload
+                </div>
+                <div class="card-body">
+                    <form id="fileUploadForm" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="file">Choose a File</label>
+                            <input type="file" class="form-control-file" id="file" name="file">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Bootstrap JS and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    $("#fileUploadForm").submit(function (event) {
+        event.preventDefault(); // Prevent the default form submission behavior
+        var formData = new FormData(this);
+
+        var authToken = localStorage.getItem("authToken");
+
+        jQuery.ajax({
+            type: "POST",
+            url: "/api/files/",
+            data: formData,
+            processData: false, // Prevent jQuery from automatically processing the data
+            contentType: false, // Ensure that the correct content type is set
+            headers: {
+                "AUTHORIZATION": "Token " + authToken // Include the token in the header
+            },
+            success: function (response) {
+                // Handle a successful file upload (e.g., display a success message)
+                alert("File uploaded successfully!");
+            },
+            error: function (error) {
+                alert("File upload failed. Please try again.");
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

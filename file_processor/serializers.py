@@ -16,7 +16,7 @@ class ChecksSerializer(serializers.ModelSerializer):
             'date',
             'status',
             'result',
-        )
+            )
 
 
 class StatusField(CharField):  # CharField
@@ -31,20 +31,23 @@ class FileProcessorSerializer(serializers.ModelSerializer):
     user = fields.HiddenField(default=fields.CurrentUserDefault())
     checks = ChecksSerializer(read_only=True, many=True)
     status = StatusField()
+    filename = serializers.SerializerMethodField()
 
     class Meta:
         model = models.FileProcessor
         fields = (
             'id',
             'file',
+            'filename',
             'user',
             'last_check',
             'status',
             'checks',
-        )
+            )
         extra_kwargs = {
             'last_check': {'read_only': True},
             'file': {'validators': [ValidateFileType()]}
-        }
+            }
 
-
+    def get_filename(self, obj):
+        return obj.file.name.split('/')[-1]

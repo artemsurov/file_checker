@@ -23,8 +23,3 @@ def customer_client(db) -> 'rest_framework.test.APIClient':
     client.credentials(HTTP_AUTHORIZATION=f'Token {token.key}')
     client.user = customer
     return client
-
-
-# baker.generators.add('django_extensions.db.fields.RandomCharField', lambda: get_random_string(64))
-# baker.generators.add('django_extensions.db.fields.CreationDateTimeField', lambda: datetime.datetime.now())
-# baker.generators.add('django_extensions.db.fields.ModificationDateTimeField', lambda: datetime.datetime.now())

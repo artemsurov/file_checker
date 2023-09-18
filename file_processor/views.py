@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from file_processor import models
 from file_processor.const import FileStatus
 from file_processor.serializers import FileProcessorSerializer
+from file_processor.tasks import validate_files_task
 
 
 class FileProcessorViewSet(viewsets.ModelViewSet):
@@ -24,6 +25,6 @@ class FileProcessorViewSet(viewsets.ModelViewSet):
             instance: models.FileProcessor = self.get_object()
         except Http404:
             raise PermissionDenied({"result": "failed", "message": "have no access to this file"})
-        instance.validate_file()
+        validate_files_task.delay(instance.file.name)
         return Response(status=status.HTTP_200_OK, data={"result": "ok", "message": "file under testing"})
 

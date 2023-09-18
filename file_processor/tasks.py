@@ -1,14 +1,8 @@
-from conf import celery_app
+from celery import shared_task
 
 from file_processor.services.validator import validate_files
 
 
-@celery_app.on_after_configure.connect
-def setup_periodic_tasks(sender, **kwargs):
-    # Calls test('hello') every 10 seconds.
-    sender.add_periodic_task(10.0, cron_validate_files.s(), name='add every 10')
-
-
-@celery_app.task
-def cron_validate_files():
-    validate_files()
+@shared_task(name='validate_files_task')
+def validate_files_task(file_name: str = ''):
+    validate_files(file_name)

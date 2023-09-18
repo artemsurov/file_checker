@@ -17,7 +17,7 @@ env = environ.Env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env.read_env(env.str('ENV_PATH', BASE_DIR / 'settings.env'))
+env.read_env(env.str('ENV_PATH', BASE_DIR / 'settings_local.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -157,9 +157,13 @@ REST_FRAMEWORK = {
 
 AUTH_USER_MODEL = 'user.User'
 
-MEDIA_ROOT = BASE_DIR
+MEDIA_ROOT = BASE_DIR / 'media'
 
 CELERY_BROKER_URL = os.getenv('DJANGO_CELERY_BROKER_URL')
+
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 LOGGING = {
     'version': 1,

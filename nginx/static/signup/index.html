@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup Page</title>
-    <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
@@ -34,34 +33,29 @@
     </div>
 </div>
 
-<!-- Include Bootstrap JS and jQuery -->
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
-    // Function to handle form submission
     $("#signupForm").submit(function (event) {
-        event.preventDefault(); // Prevent the default form submission behavior
+        event.preventDefault();
 
-        // Collect form data
         const formData = {
             email: $("#email").val(),
             password: $("#password").val(),
         };
 
-        // Send a POST request to the API endpoint
         jQuery.ajax({
             type: "POST",
-            url: "/api/auth/users/", // Replace with your actual API endpoint
+            url: "/api/auth/users/",
             data: JSON.stringify(formData),
             contentType: "application/json",
             success: function (response) {
-                // Handle a successful response (e.g., redirect to a success page)
                 alert("Signup successful!");
+                window.location.href = '/login/';
             },
             error: function (error) {
-                // Handle an error response (e.g., display an error message)
                 alert("Signup failed. Please try again.");
             }
         });

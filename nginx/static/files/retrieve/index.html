@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Retrieval Page</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Data Retrieval
+                </div>
+                <div class="card-body">
+                    <div id="data-container">
+                        <!-- Data retrieved from API will be displayed here -->
+                    </div>
+                    <div class="form-group">
+                        <label for="newFile">Upload New File</label>
+                        <input type="file" class="form-control-file" id="newFile" name="newFile">
+                        <button id="uploadButton" class="btn btn-primary mt-3">Upload</button>
+                        <button id="runCheck" class="btn btn-primary mt-3">Run check</button>
+                    </div>
+                   <button id="removeButton" class="btn btn-danger mt-3">Remove</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Bootstrap JS and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    // Function to extract the 'id' from the URL
+    var apiEndpoint = '/api/files/' + extractIdFromUrl() + '/';
+    var authToken = localStorage.getItem("authToken");
+    function extractIdFromUrl() {
+        var url = window.location.pathname; // Get the URL path
+        var parts = url.split('/'); // Split the URL by '/'
+        if (parts.length >= 2) {
+            return parts[2]; // 'id' should be the third part of the path (index 2)
+        }
+        return null;
+    }
+
+    // Function to fetch data from the API
+    function fetchData() {
+
+        jQuery.ajax({
+            url: apiEndpoint,
+            type: 'GET',
+            dataType: 'json',
+            headers: {
+                "AUTHORIZATION": "Token " + authToken
+            },
+            success: function (data) {
+                // Handle the data retrieved from the API
+                var dataHtml = `
+                    <h4>ID: ${data.id}</h4>
+                    <p><a href="${data.file}" target="_blank">File name:  ${data.filename}</a></p>
+                    <p>Last Check: ${data.last_check}</p>
+                    <p>Status: ${data.status}</p>
+                    <h5>Checks:</h5>
+                    <ul>
+                `;
+
+                // Iterate through checks and add them to the list
+                data.checks.forEach(function (check) {
+                    dataHtml += `<li>${check.date} ${check.status} ${check.result}</li>`;
+                });
+
+                dataHtml += '</ul>';
+
+                // Display the data in the data-container
+                $('#data-container').html(dataHtml);
+            },
+            error: function (error) {
+                // Handle error
+                alert('Error fetching data from the API.');
+            }
+        });
+    }
+
+    function removeItem() {
+        jQuery.ajax({
+            url: apiEndpoint,
+            type: 'DELETE',
+            headers: {
+                "AUTHORIZATION": "Token " + authToken // Include the token in the header
+            },
+            success: function (data) {
+                alert('Item removed successfully!');
+                window.location.href = '/files/';
+            },
+            error: function (error) {
+                alert('Error removing the item.');
+            }
+        });}
+
+    function uploadFile() {
+        var fileInput = document.getElementById('newFile');
+        var newFile = fileInput.files[0];
+        var formData = new FormData();
+        formData.append('file', newFile);
+
+        jQuery.ajax({
+            url: apiEndpoint,
+            type: 'PUT',
+            headers: {
+                "AUTHORIZATION": "Token " + authToken
+            },
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                alert('File uploaded successfully!');
+            },
+            error: function (error) {
+                alert('File upload failed. Please try again.');
+            }
+        });
+    }
+
+    function runCheck() {
+        jQuery.ajax({
+            url: apiEndpoint,
+            type: 'POST',
+            headers: {
+                "AUTHORIZATION": "Token " + authToken // Include the token in the header
+            },
+            success: function (data) {
+                alert('Run check successfully!');
+            },
+            error: function (error) {
+                alert('Error appearing while running check.');
+            }
+        });}
+
+    $(document).ready(fetchData);
+    $('#uploadButton').click(uploadFile);
+    $('#removeButton').click(removeItem);
+    $('#runCheck').click(runCheck);
+
+</script>
+
+</body>
+</html>
